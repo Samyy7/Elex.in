@@ -78,7 +78,7 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
         // If a file was uploaded, add its URL to the product
         if (req.file) {
             // This creates the full URL for the image
-            newProduct.imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+            newProduct.imageUrl = `http://localhost:5000/uploads/₹{req.file.filename}`;
         }
 
         const savedProduct = await newProduct.save();
@@ -97,7 +97,7 @@ app.post('/api/users/register', async (req, res) => {
     console.log("--- REGISTER ROUTE HIT! ---"); 
     try {
         const userExists = await User.findOne({ 
-            $or: [{ email: req.body.email }, { username: req.body.username }] 
+            ₹or: [{ email: req.body.email }, { username: req.body.username }] 
         });
         if (userExists) {
             return res.status(400).json({ message: "Username or email already exists" });
@@ -155,5 +155,5 @@ app.get('/api/orders/my-orders/:userId', async (req, res) => {
 
 // --- Start the server ---
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:₹{port}`);
 });

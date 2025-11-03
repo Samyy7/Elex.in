@@ -75,7 +75,7 @@ function ProductPage() {
               />
               <h3 style={{ fontSize: '1.1rem' }}>{product.name}</h3>
               <p style={{ color: '#666', fontSize: '0.9rem' }}>{product.description}</p>
-              <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>${product.price}</p>
+              <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>₹{product.price}</p>
               <p style={{ fontSize: '0.8rem' }}>In Stock: {product.stockQuantity}</p>
               
               <button onClick={() => addToCart(product)} style={{

@@ -65,12 +65,12 @@ function CartPage() {
         <div>
           {cart.map((item, index) => (
             <div key={index} style={{ display: 'flex', justifyContent: 'space-between', margin: '5px 0' }}>
-              <span>{item.name} - ${item.price}</span>
+              <span>{item.name} - ₹{item.price}</span>
               <button onClick={() => removeFromCart(item._id)}>Remove</button>
             </div>
           ))}
           <hr />
-          <h3>Total: ${totalPrice}</h3>
+          <h3>Total: ₹{totalPrice}</h3>
           <button onClick={handleCheckout} style={{ width: '100%', padding: '10px' }}>
             Proceed to Checkout
           </button>

@@ -12,7 +12,7 @@ function OrderHistoryPage() {
       const fetchOrders = async () => {
         try {
           // Call the backend endpoint with the user's ID
-          const response = await axios.get(`http://localhost:5000/api/orders/my-orders/${user._id}`);
+          const response = await axios.get(`http://localhost:5000/api/orders/my-orders/₹{user._id}`);
           setOrders(response.data);
         } catch (error) {
           console.error("Failed to fetch orders:", error);
@@ -34,7 +34,7 @@ function OrderHistoryPage() {
             <h4>Order ID: {order._id}</h4>
             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
             <p><strong>Status:</strong> {order.status}</p>
-            <p><strong>Total:</strong> ${order.totalPrice}</p>
+            <p><strong>Total:</strong> ₹{order.totalPrice}</p>
             <h5>Items:</h5>
             <ul>
               {order.products.map((item, index) => (
