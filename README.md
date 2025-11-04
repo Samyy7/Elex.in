@@ -105,3 +105,36 @@ npm start
 ```
 
 Your app will open in your browser at http://localhost:3000
+
+
+# Database Design: E-commerce MERN Project (NoSQL)
+
+This document outlines the database schema for our MERN stack application.
+
+**Important Note for Viva:** Our project uses **MongoDB (a NoSQL database)**, not a relational (SQL) database. The design is different and often simpler.
+
+* **No Joins:** We don't use complex SQL "joins." Instead, we either **embed** data (like product details in an order) or use **references** (like linking an order to a user).
+
+* **No Keys (in the same way):** MongoDB automatically creates a unique `_id` (like a Primary Key) for every document. We use this `_id` to create references between collections (like a Foreign Key).
+
+* **Collections, not Tables:** We store data in **Collections** (like tables) which hold **Documents** (like rows).
+
+### 1. Collections and their Documents (Entities & Attributes)
+
+| Collection (Entity) | Fields (Attributes) | Attribute Type / Description | Entity Type (MongoDB) |
+| :--- | :--- | :--- | :--- |
+| **User** | **\_id (PK)**<br>username<br>email<br>password<br>role<br>shippingAddress<br>timestamps | **ObjectId (Auto-PK)**<br>String, Unique<br>String, Unique<br>String (hashed in a real app)<br>String (Enum: 'customer', 'admin')<br>String<br>Date (Auto-generated) | Strong |
+| **Product** | **\_id (PK)**<br>name<br>description<br>price<br>stockQuantity<br>imageUrl<br>timestamps | **ObjectId (Auto-PK)**<br>String<br>String<br>Number<br>Number<br>String (URL to uploaded file)<br>Date (Auto-generated) | Strong |
+| **Order** | **\_id (PK)**<br>user<br>products<br>totalPrice<br>status<br>shippingAddress<br>timestamps | **ObjectId (Auto-PK)**<br>**Reference (links to User \_id)**<br>**Array of Embedded Documents**<br>Number<br>String (Enum: 'Processing', etc.)<br>String<br>Date (Auto-generated) | Strong |
+| **Cart** | (Not a DB Collection) | Managed as **client-side state** in **React Context**. | (N/A) |
+
+### 2. Collections and Relations
+
+In MongoDB, we have two main relationship types: **Reference** (linking) and **Embedding** (nesting).
+
+| Collections (Entities) | Relation | Cardinality (SQL Equiv.) | Implementation (MERN / NoSQL) |
+| :--- | :--- | :--- | :--- |
+| **User** <BR> **Order** | `places` | One-to-Many | **Reference.** The `Order` document's `user` field stores a `ref` (ObjectId) pointing to the `_id` of the `User` document. |
+| **Order** <BR> **Product** | `contains` | Many-to-Many | **Embedding with Reference.** The `Order` document contains a `products` *array*. Each element in the array is an embedded document that holds a `ref` (ObjectId) to a `Product` and the `quantity`. |
+| **User (Admin)** <BR> **Product** | `manages` | (N/A - Logic) | **Application-Layer Logic.** This is not a database relation. The React app checks the `user.role` from `AuthContext` to show/hide the "Add Product" form. |
+| **Cart (React)** <BR> **Product** | `holds` | (N/A - State) | **Application-Layer State.** This is not a database relation. The `CartContext` in React holds a temporary array of `Product` objects in the browser's memory. |
