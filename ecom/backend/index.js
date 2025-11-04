@@ -65,9 +65,6 @@ app.get('/api/products', async (req, res) => {
 // 'image' must match the name in our frontend form.
 app.post('/api/products', upload.single('image'), async (req, res) => {
     try {
-        // req.body will have the text fields (name, price, etc.)
-        // req.file will have the image info
-        
         const newProduct = new Product({
             name: req.body.name,
             description: req.body.description,
@@ -75,10 +72,13 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
             stockQuantity: req.body.stockQuantity,
         });
 
-        // If a file was uploaded, add its URL to the product
+        // If a file was uploaded, add its URL
         if (req.file) {
-            // This creates the full URL for the image
-            newProduct.imageUrl = `http://localhost:5000/uploads/₹{req.file.filename}`;
+            
+            // --- THIS IS THE CRITICAL LINE ---
+            // It MUST use backticks ( ` ), NOT single quotes ( ' ).
+            newProduct.imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+            // ---------------------------------
         }
 
         const savedProduct = await newProduct.save();
@@ -91,14 +91,15 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
 // -------------------------------------
 
 // --- USER ROUTES ---
-// (Your Register and Login routes are unchanged)
 app.post('/api/users/register', async (req, res) => {
-    // ... (same code as before)
+    
     console.log("--- REGISTER ROUTE HIT! ---"); 
     try {
+        // --- THIS IS THE CORRECTED LINE ---
         const userExists = await User.findOne({ 
-            ₹or: [{ email: req.body.email }, { username: req.body.username }] 
+            $or: [{ email: req.body.email }, { username: req.body.username }] 
         });
+        // ----------------------------------
         if (userExists) {
             return res.status(400).json({ message: "Username or email already exists" });
         }
@@ -106,6 +107,7 @@ app.post('/api/users/register', async (req, res) => {
         const savedUser = await user.save();
         savedUser.password = undefined; 
         res.status(201).json(savedUser);
+
     } catch (error) {
         console.error("REGISTER ERROR:", error.message);
         res.status(400).json({ message: error.message });
@@ -155,5 +157,5 @@ app.get('/api/orders/my-orders/:userId', async (req, res) => {
 
 // --- Start the server ---
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:₹{port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
